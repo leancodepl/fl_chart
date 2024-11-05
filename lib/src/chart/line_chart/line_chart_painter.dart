@@ -1130,6 +1130,10 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
       bottomLeft: radius,
       bottomRight: radius,
     );
+    final shadowRoundedRect = RRect.fromRectAndRadius(
+      rect.shift(tooltipData.shadowOffset),
+      radius,
+    );
 
     var topSpot = showingTooltipSpots.showingSpots[0];
     for (final barSpot in showingTooltipSpots.showingSpots) {
@@ -1139,6 +1143,12 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
     }
 
     _bgTouchTooltipPaint.color = tooltipData.getTooltipColor(topSpot);
+    _shadowTouchTooltipPaint
+      ..color = tooltipData.shadowColor
+      ..maskFilter = MaskFilter.blur(
+        BlurStyle.normal,
+        tooltipData.shadowBlur,
+      );
 
     final rotateAngle = tooltipData.rotateAngle;
     final rectRotationOffset =
@@ -1161,6 +1171,7 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
       angle: rotateAngle,
       drawCallback: () {
         canvasWrapper
+          ..drawRRect(shadowRoundedRect, _shadowTouchTooltipPaint)
           ..drawRRect(roundedRect, _bgTouchTooltipPaint)
           ..drawRRect(roundedRect, _borderTouchTooltipPaint);
       },
